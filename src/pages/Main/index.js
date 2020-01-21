@@ -4,11 +4,12 @@ import Geolocation from '@react-native-community/geolocation';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import api from '../../services/api';
+import { connect, disconnect, subscribeToNewDevs } from '../../services/socket';
 
 import { Avatar, Container, Name, Bio, Techs, Form, Input, Button, TextButton } from './styles';
 
 export default function Main({ navigation }) {
-  const [ text, setText ] = useState([]);
+  const [ techs, setTechs ] = useState([]);
   const [ devs, setDevs ] = useState([]);
   const [ currentRegion, setCurrentRegion ] = useState({});
 
@@ -26,25 +27,43 @@ export default function Main({ navigation }) {
     )
   }, [])
 
+  useEffect(() => {
+    subscribeToNewDevs(dev => setDevs([...devs, dev]));
+  }, [devs]);
+
+  function setupWebsocket() {
+    disconnect();
+    
+    const { latitude, longitude } = currentRegion;
+    
+    connect(
+      latitude,
+      longitude,
+      techs,
+      );
+  }
+  
+  async function loadDevs() {
+    
+    const { latitude, longitude } = currentRegion;
+    
+    const response = await api.get('search', {
+      params: {
+        latitude,
+        longitude,
+        techs: techs,
+      },
+    });
+    
+    setDevs(response.data.devs);
+    setTechs('');
+    setupWebsocket();
+  }
+  
   function handleRegionChange(region) {
     setCurrentRegion(region)
   }
-
-  async function loadDevs() {
-    const { latitude, longitude } = currentRegion;
-
-    const response = await api.get('search', {
-      params: {
-          latitude,
-          longitude,
-          techs: text,
-      },
-    });
-
-    setDevs(response.data.devs);
-    setText('');
-  }
-
+  
   if (!currentRegion) {
     return null
   }
@@ -83,8 +102,8 @@ export default function Main({ navigation }) {
           placeholderTextColor="#999"
           autoCapitalize="words"
           autoCorrect={false}
-          value={text}
-          onChangeText={setText}
+          value={techs != '' ? techs : ''}
+          onChangeText={setTechs}
         />
         <Button onPress={() => loadDevs()} >
           <Icon name="my-location" size={20} color="#fff" />
