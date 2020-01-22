@@ -1,4 +1,5 @@
 import React from 'react';
+import CodePush from 'react-native-code-push';
 import { StatusBar, YellowBox } from 'react-native';
 
 import Routes from './src/routes';
@@ -7,7 +8,7 @@ YellowBox.ignoreWarnings([
   'Unrecognized WebSocket'
 ]);
 
-export default function App() {
+function App() {
   return (
     <>
       <StatusBar backgroundColor="#7d40e7" barStyle="light-content" />
@@ -15,3 +16,7 @@ export default function App() {
     </>
   );
 }
+
+export default CodePush({
+  checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
+})(App);
