@@ -15,6 +15,7 @@
         android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyASHqo8V9h3799NYACwBil8EpsmC_SfDQs"/>
       <activity
+        android:launchMode="singleTop"
         android:theme="@style/SplashTheme"
         android:name=".MainActivity"
         android:label="@string/app_name"

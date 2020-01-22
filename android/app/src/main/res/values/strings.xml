@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">DevRadar</string>
+    <string name="CodePushDeploymentKey" moduleConfig="true" translatable="false">c5a844fb-b57d-4b4c-bd15-88c26cb96864</string>
 </resources>
